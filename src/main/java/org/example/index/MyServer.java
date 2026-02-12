@@ -40,7 +40,7 @@ public class MyServer {
             writer.print("HTTP/1.1 200 OK\r\n");
             writer.print("Content-Type: text/plain\r\n");
             writer.print("\r\n");
-            writer.print("Hello Linda");
+            writer.print("Hello Linda, this is your very first own server! congratz!");
             writer.flush();
 
             client.close();}
