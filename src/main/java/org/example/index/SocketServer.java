@@ -28,7 +28,6 @@ public class SocketServer {
     }
 
     public void start() throws IOException {
-
         ServerSocket server = new ServerSocket(port);
         System.out.println("Server started. Listening to port " + port);
 
