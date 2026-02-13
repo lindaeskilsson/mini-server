@@ -1,120 +1,122 @@
-Mini HTTP Server (Java)
+# Mini HTTP Server (Java)
 
-En minimal webbserver byggd från grunden i Java utan ramverk.
-Projektet demonstrerar hur HTTP fungerar ovanpå TCP — från socket-anslutning till routing och respons.
+A minimal web server built **from scratch using pure Java sockets**.  
+No frameworks. No Spring. Just HTTP.
 
-Syftet är att förstå vad som faktiskt händer bakom t.ex. Spring Boot / Express.
+The purpose of this project is to understand what actually happens behind modern backend frameworks by implementing the core mechanics manually.
 
-Funktioner
+---
 
-Tar emot riktiga HTTP-requests från webbläsare
+## ✨ Features
 
-Parser för:
+- Accepts real browser connections
+- Parses HTTP requests (method, path, headers)
+- Routes requests based on URL
+- Generates valid HTTP responses
+- Automatic `404 Not Found`
+- Clear separation between networking and application logic
 
-method
+You can open it in Chrome and it behaves like a real backend server.
 
-path
+---
 
-headers
+## 🏗 Architecture
 
-Router med handlers
-
-Dynamiska responses
-
-Automatisk 404-hantering
-
-Separerad arkitektur (transport vs applikationslogik)
-
-Arkitektur
 Browser
-   ↓
-SocketServer (TCP)
-   ↓
-HttpParser (tolkar request)
-   ↓
-Router (väljer handler)
-   ↓
-HttpResponse (bygger HTTP-svar)
-   ↓
+↓
+TCP Connection
+↓
+SocketServer
+↓
+HttpParser
+↓
+Router
+↓
+HttpResponse
+↓
 Browser
 
 
-Servern är uppdelad i lager:
+### Responsibility per component
 
-Lager	Ansvar
-SocketServer	Hanterar TCP-anslutningar
-HttpParser	Omvandlar text → HttpRequest
-Router	Bestämmer vad som ska köras
-HttpResponse	Bygger korrekt HTTP-svar
-Exempel-routes
-URL	Resultat
-/	Welcome-text
-/health	OK
-okänd path	404 Not Found
-Starta servern
-1. Klona repo
+| Component | Responsibility |
+|--------|------|
+**SocketServer** | Handles TCP connections |
+**HttpParser** | Converts raw request text → `HttpRequest` object |
+**Router** | Chooses which handler should run |
+**HttpResponse** | Builds valid HTTP response text |
+
+---
+
+## 🌐 Example Routes
+
+| Route | Result |
+|------|------|
+`/` | Welcome message |
+`/health` | OK |
+unknown path | 404 Not Found |
+
+---
+
+## 🚀 Run the server
+
+### 1. Clone
+```bash
 git clone https://github.com/lindaeskilsson/mini-server.git
 cd mini-server
-
-2. Kör
-
-(antingen via IDE eller terminal)
+2. Start
+Run via IDE or terminal:
 
 mvn compile
 mvn exec:java -Dexec.mainClass="org.example.index.http.MyServer"
-
-
-Servern startar på:
+Server starts on:
 
 http://localhost:4000
-
-Testa
-
-I webbläsare:
+🧪 Test
+Browser:
 
 http://localhost:4000/
 http://localhost:4000/health
 http://localhost:4000/anything
-
-
-eller via curl:
+Terminal:
 
 curl -v http://localhost:4000/health
+📚 Implemented HTTP Concepts
+Request line parsing
 
-Vad projektet visar
+Header parsing
 
-Projektet implementerar grunderna i HTTP:
+Status codes
 
-request line parsing
+Content-Length handling
 
-headers
+Routing
 
-status codes
+Layered architecture
 
-content length
+This mirrors the core of real backend frameworks — without abstraction.
 
-routing
-
-separation of concerns
-
-Detta motsvarar kärnan i riktiga webbframeworks — men utan abstraktioner.
-
-Framtida förbättringar
-
-POST body parsing
+🔮 Future Improvements
+POST requests & request body
 
 Query parameters
 
 JSON responses
 
-Threading / concurrent clients
+Static file serving
 
 Middleware / filter chain
 
-Static files
+Concurrent clients
 
-Lärdom
+🎯 Learning Goal
+The project demonstrates that a web server is fundamentally:
 
-Projektet visar att en webbserver i grunden bara är:
+A TCP loop + a text protocol + a function map
 
-en TCP-loop + texttolkning + funktionskarta
+Frameworks simply automate this.
+
+👤 Author
+Linda Eskilsson
+Java Developer Student
+
