@@ -96,25 +96,11 @@ Layered architecture
 
 This mirrors the core of real backend frameworks — without abstraction.
 
-🔮 Future Improvements
-POST requests & request body
-
-Query parameters
-
-JSON responses
-
-Static file serving
-
-Middleware / filter chain
-
-Concurrent clients
 
 🎯 Learning Goal
 The project demonstrates that a web server is fundamentally:
-
-A TCP loop + a text protocol + a function map
-
-Frameworks simply automate this.
+- A TCP loop + a text protocol + a function map
+- Frameworks simply automate this.
 
 👤 Author
 Linda Eskilsson
