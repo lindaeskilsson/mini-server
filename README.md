@@ -1,23 +1,108 @@
-Mini HTTP Server (Java)
+# Mini HTTP Server (Java)
 
-Detta projekt är en minimal webbserver byggd från grunden med Java sockets.
-Syftet är att förstå hur nätverkskommunikation faktiskt fungerar bakom en webbläsare.
+A minimal web server built **from scratch using pure Java sockets**.  
+No frameworks. No Spring. Just HTTP.
 
-Servern binder en port, accepterar klientanslutningar via TCP, läser en HTTP-request och skickar tillbaka ett korrekt formaterat HTTP-svar.
+The purpose of this project is to understand what actually happens behind modern backend frameworks by implementing the core mechanics manually.
 
-När man öppnar http://localhost:4000 svarar servern med:
+---
 
-Hello Linda, this is your very first own server! congratz!
+## ✨ Features
+
+- Accepts real browser connections
+- Parses HTTP requests (method, path, headers)
+- Routes requests based on URL
+- Generates valid HTTP responses
+- Automatic `404 Not Found`
+- Clear separation between networking and application logic
+
+You can open it in Chrome and it behaves like a real backend server.
+
+---
+
+## 🏗 Architecture
+
+Browser
+↓
+TCP Connection
+↓
+SocketServer
+↓
+HttpParser
+↓
+Router
+↓
+HttpResponse
+↓
+Browser
 
 
-Projektet demonstrerar praktisk förståelse för:
+### Responsibility per component
 
-TCP/IP och sockets
+| Component | Responsibility |
+|--------|------|
+**SocketServer** | Handles TCP connections |
+**HttpParser** | Converts raw request text → `HttpRequest` object |
+**Router** | Chooses which handler should run |
+**HttpResponse** | Builds valid HTTP response text |
 
-Blocking I/O
+---
 
-Klient–server-kommunikation
+## 🌐 Example Routes
 
-HTTP-protokollets struktur
+| Route | Result |
+|------|------|
+`/` | Welcome message |
+`/health` | OK |
+unknown path | 404 Not Found |
 
-Webben är i grunden bara text över en socket — den här servern visar hur.
+---
+
+## 🚀 Run the server
+
+### 1. Clone
+```bash
+git clone https://github.com/lindaeskilsson/mini-server.git
+cd mini-server
+2. Start
+Run via IDE or terminal:
+
+mvn compile
+mvn exec:java -Dexec.mainClass="org.example.index.http.MyServer"
+Server starts on:
+
+http://localhost:4000
+🧪 Test
+Browser:
+
+http://localhost:4000/
+http://localhost:4000/health
+http://localhost:4000/anything
+Terminal:
+
+curl -v http://localhost:4000/health
+📚 Implemented HTTP Concepts
+Request line parsing
+
+Header parsing
+
+Status codes
+
+Content-Length handling
+
+Routing
+
+Layered architecture
+
+This mirrors the core of real backend frameworks — without abstraction.
+
+
+🎯 Learning Goal
+The project demonstrates that a web server is fundamentally:
+- A TCP loop + a text protocol + a function map
+- Frameworks simply automate this.
+
+👤 Author
+Linda Eskilsson
+Java Developer Student
+
