@@ -17,14 +17,25 @@ public class SocketServer {
     public SocketServer(int port) {
         this.port = port;
 
-        router.add("GET", "/", req ->
-                new HttpResponse(200, "Welcome to Linda's server"));
+        router.add("GET", "/app.js", req -> {
+            byte[] file = StaticFileService.read("/app.js");
+            if (file == null) return new HttpResponse(404, "Not found: /app.js");
+            return HttpResponse.bytes(200, file, "application/javascript; charset=UTF-8");
+        });
 
-        router.add("GET", "/health", req ->
-                new HttpResponse(200, "OK"));
+        router.add("GET", "/style.css", req -> {
+            byte[] file = StaticFileService.read("/Style.css");
+            if (file == null) return new HttpResponse(404, "Not found: /style.css");
+            return HttpResponse.bytes(200, file, "text/css; charset=UTF-8");
+        });
 
-        router.add("GET", "/favicon.ico", req ->
-                new HttpResponse(204, ""));
+
+        router.add("GET", "/", req -> {
+            byte[] file = StaticFileService.read("/index.html");
+            if (file == null) return new HttpResponse(404, "Not found: /index.html");
+            return HttpResponse.bytes(200, file, "text/html; charset=UTF-8");
+        });
+
     }
 
     public void start() throws IOException {
@@ -39,36 +50,46 @@ public class SocketServer {
         }
     }
 
-        // for each client:
-        private static void handleClient(Socket client) {
-            try(
-                    InputStream in = client.getInputStream();
-                    OutputStream out = client.getOutputStream();
-                    PrintWriter writer = new PrintWriter(out)
-            ){
-                // parse request
-                HttpRequest request = parser.parse(in);
+    private static void handleClient(Socket client) {
+        try (
+                InputStream in = client.getInputStream();
+                OutputStream out = client.getOutputStream();
+                PrintWriter writer = new PrintWriter(out)
+        ) {
+            HttpRequest request = parser.parse(in);
 
-                // skydd om browser stänger snabbt
-                if (request == null) {
-                    client.close();
-                    return;
-                }
-
-                System.out.println(request.getMethod() + " " + request.getPath());
-
-                // 2. Route request
-                HttpResponse response = router.route(request);
-
-                // 3. Send response
-                writer.print(response.toHttpString());
-                writer.flush();
-
-
-                client.close();}
-            catch (IOException e) {
-                e.printStackTrace();
+            if (request == null) {
+                client.close();
+                return;
             }
 
+            System.out.println(request.getMethod() + " " + request.getPath());
+
+            HttpResponse response = router.route(request);
+
+            // 1) skriv headers
+            writer.print(response.toHttpString());
+            writer.flush();
+
+            // 2) skriv body bytes (superviktigt för css/js)
+            out.write(response.getBodyBytes());
+            out.flush();
+
+            client.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
+    private static String guessContentType(String path) {
+        if (path.endsWith(".css")) return "text/css; charset=UTF-8";
+        if (path.endsWith(".js")) return "application/javascript; charset=UTF-8";
+        if (path.endsWith(".html")) return "text/html; charset=UTF-8";
+        if (path.endsWith(".json")) return "application/json; charset=UTF-8";
+        if (path.endsWith(".png")) return "image/png";
+        if (path.endsWith(".jpg") || path.endsWith(".jpeg")) return "image/jpeg";
+        if (path.endsWith(".svg")) return "image/svg+xml";
+        return "text/plain; charset=UTF-8";
+    }
+}
